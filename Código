@@ -1,0 +1,66 @@
+Codigo Fuente:
+-- Hecho por Diego Jaramillo
+import Data.List  -- Importamos Data.List para usar funciones de listas, aunque no se usa explícitamente en este código.
+
+-- | Calcula la suma alícuota de un número.
+-- Crea una lista con todos los factores de n (sin contar a n) y los suma.
+
+sumaAlicuota :: Int -> Int
+sumaAlicuota n = sum [x | x <- [1..n-1], n `mod` x == 0]
+
+-- | Clasifica un número según su suma alícuota.
+clasificarNumero :: Int -> String
+clasificarNumero n
+    | sumaAlicuota n == n = "Engineering"
+    | sumaAlicuota n > n  = "Administrative"
+    | otherwise           = "Humanities"
+
+-- | Determina el período de admisión basado en los primeros tres dígitos del número.
+
+obtenerPeriodoAdmisión :: Int -> String
+obtenerPeriodoAdmisión n = case n `div` 100000 of
+    241 -> "2024-1"
+    242 -> "2024-2"
+    251 -> "2025-1"
+    252 -> "2025-2"
+    261 -> "2026-1"
+    262 -> "2026-2"
+    _   -> error "Período de admisión inválido"
+
+-- | Obtiene la categoría del programa académico.
+-- Primero elimina del número los últimos tres dígitos y después los primeros tres.
+
+obtenerCategoria :: Int -> String
+obtenerCategoria n = clasificarNumero ((n `div` 1000) `mod` 100)
+
+-- | Obtiene el número consecutivo de admisión.
+-- Devuelve los últimos tres dígitos del número.
+
+obtenerNumeroConsecutivo :: Int -> String
+obtenerNumeroConsecutivo n = show (n `mod` 1000)
+
+-- | Determina si el número es par o impar.
+
+esParOImpar :: Int -> String
+esParOImpar n
+    | even n = "even"
+    | otherwise = "odd"
+
+-- | Procesa el ID de un estudiante verificando su longitud y generando la salida correspondiente.
+-- La salida incluye el período de admisión, categoría, número consecutivo y paridad.
+
+procesarIDEstudiante :: Int -> String
+procesarIDEstudiante id
+    | length (show id) /= 8 = "Invalid ID."
+    | otherwise = periodoAdmisión ++ " " ++ categoria ++ " num" ++ numeroConsecutivo ++ " " ++ paridad
+  where
+    periodoAdmisión = obtenerPeriodoAdmisión id
+    categoria = obtenerCategoria id
+    numeroConsecutivo = obtenerNumeroConsecutivo id
+    paridad = esParOImpar id
+
+-- | Función principal que lee un ID de estudiante de la entrada estándar, lo procesa y muestra el resultado.
+main :: IO ()
+main = do
+    id <- readLn :: IO Int
+    putStrLn $ procesarIDEstudiante id
